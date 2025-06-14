@@ -526,44 +526,20 @@
         });
 
         const data = {
+            cedula: raw.cedula,
             edad: raw.edad,
-            score_crediticio: raw.score_crediticio || 0,
+            genero: raw.genero,
+            estado_civil: raw.estado_civil,
+            nivel_educativo: raw.nivel_educativo,
+            ciudad: raw.ciudad,
+            ingresos_mensuales: raw.ingresos_mensuales,
+            gastos_mensuales: raw.gastos_mensuales,
+            tiene_empleo: raw.tiene_empleo === 'si',
+            tipo_empleo: raw.tipo_empleo,
+            score_crediticio: raw.score_crediticio || null,
+            monto_solicitado: raw.monto_solicitado,
             plazo_meses: raw.plazo_meses,
-            "sueldo en pesos": raw.ingresos_mensuales,
-            "gasto en pesos": raw.gastos_mensuales,
-            "monto_solicitado (Cop)": raw.monto_solicitado,
-
-            estado_civil_Casado: raw.estado_civil === "casado" ? 1 : 0,
-            estado_civil_Divorciado: raw.estado_civil === "divorciado" ? 1 : 0,
-            estado_civil_Soltero: raw.estado_civil === "soltero" ? 1 : 0,
-
-            genero_F: raw.genero === "F" ? 1 : 0,
-            genero_M: raw.genero === "M" ? 1 : 0,
-
-            nivel_educativo_Primaria: raw.nivel_educativo === "primaria" ? 1 : 0,
-            nivel_educativo_Secundaria: raw.nivel_educativo === "secundaria" ? 1 : 0,
-            nivel_educativo_Universitaria: raw.nivel_educativo === "universitaria" ? 1 : 0,
-
-            ciudad_Barranquilla: raw.ciudad === "barranquilla" ? 1 : 0,
-            ciudad_Bogota: raw.ciudad === "bogota" ? 1 : 0,
-            ciudad_Cali: raw.ciudad === "cali" ? 1 : 0,
-            ciudad_Medellin: raw.ciudad === "medellin" ? 1 : 0,
-
-            tipo_empleo_Formal: raw.tipo_empleo === "formal" ? 1 : 0,
-            tipo_empleo_Independiente: raw.tipo_empleo === "independiente" ? 1 : 0,
-            tipo_empleo_Informal: raw.tipo_empleo === "informal" ? 1 : 0,
-
-            tiene_empleo_True: raw.tiene_empleo === "si" ? 1 : 0,
-            tiene_empleo_False: raw.tiene_empleo === "no" ? 1 : 0,
-
-            tipo_credito_Consumo: raw.tipo_credito === "consumo" ? 1 : 0,
-            tipo_credito_Hipotecario: raw.tipo_credito === "hipotecario" ? 1 : 0,
-            tipo_credito_Vehiculo: raw.tipo_credito === "vehiculo" ? 1 : 0,
-            
-            "banco_Banco A": raw.banco === "Banco A" ? 1 : 0,
-            "banco_Banco B": raw.banco === "Banco B" ? 1 : 0,
-            "banco_Banco C": raw.banco === "Banco C" ? 1 : 0
-
+            tipo_credito: raw.tipo_credito
         };
 
         console.log("📤 Datos transformados:", data);

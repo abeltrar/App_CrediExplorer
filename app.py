@@ -195,4 +195,10 @@ model_selection.predict([n])
 
 
 import joblib
+# Escaladores (los mismos que usaste para transformar en entrenamiento)
+scaler = StandardScaler()
+X[['Sueldo', 'gasto', 'solicitado']] = scaler.fit_transform(X[['Sueldo', 'gasto', 'solicitado']])
+
+# No escales nuevamente, solo guarda la estructura
+joblib.dump(X.columns.tolist(), 'columnas_modelo.pkl')
 joblib.dump(model_selection, 'modelo_credito.pkl')
