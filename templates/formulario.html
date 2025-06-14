@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Crediticia - CrediExplore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+        }
+
+        .form-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #4ecdc4;
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .form-content {
+            padding: 3rem 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group input:valid {
+            border-color: #4ecdc4;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .radio-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .amount-input::before {
+            content: '$';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4a5568;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .amount-input input {
+            padding-left: 2.5rem;
+        }
+
+        .submit-section {
+            background: #f8fafc;
+            padding: 2rem;
+            margin: 0 -2rem -3rem -2rem;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #5a67d8;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-option {
+                min-width: auto;
+            }
+        }
+
+        /* Animations */
+        .form-section {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .form-section:nth-child(1) { animation-delay: 0.1s; }
+        .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .form-section:nth-child(3) { animation-delay: 0.3s; }
+        .form-section:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <div class="form-header-content">
+                <h1>💳 Evaluación Crediticia</h1>
+                <p>Completa la información para encontrar tu crédito ideal</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <a href="index.html" class="back-link">
+                ← Volver al inicio
+            </a>
+
+            <form id="creditForm">
+                <!-- Información Personal -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">👤</span>
+                        Información Personal
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cedula">Número de Cédula *</label>
+                            <input type="text" id="cedula" name="cedula" required 
+                                   placeholder="Ej: 1234567890" pattern="[0-9]{8,12}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edad">Edad *</label>
+                            <input type="number" id="edad" name="edad" required 
+                                   min="18" max="80" placeholder="Ej: 30">
+                        </div>
+                        <div class="form-group">
+                            <label>Género *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="genero" value="M" required>
+                                    <span>Masculino</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="genero" value="F" required>
+                                    <span>Femenino</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado_civil">Estado Civil *</label>
+                            <select id="estado_civil" name="estado_civil" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="soltero">Soltero(a)</option>
+                                <option value="casado">Casado(a)</option>
+                                <option value="divorciado">Divorciado(a)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nivel_educativo">Nivel Educativo *</label>
+                            <select id="nivel_educativo" name="nivel_educativo" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="primaria">Primaria</option>
+                                <option value="bachillerato">Secundaria</option>
+                                <option value="universitario">Universitaria</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ciudad">Ciudad *</label>
+                            <select id="ciudad" name="ciudad" required>
+                                <option value="">Selecciona tu ciudad</option>
+                                <option value="bogota">Bogotá</option>
+                                <option value="medellin">Medellín</option>
+                                <option value="cali">Cali</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Financiera -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">💰</span>
+                        Información Financiera
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ingresos_mensuales">Ingresos Mensuales *</label>
+                            <div class="amount-input">
+                                <input type="number" id="ingresos_mensuales" name="ingresos_mensuales" 
+                                       required min="0" placeholder="2500000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gastos_mensuales">Gastos Mensuales *</label>
+                            <div class="amount-input">
+                                <input type="number" id="gastos_mensuales" name="gastos_mensuales" 
+                                       required min="0" placeholder="1800000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tienes empleo actualmente? *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="tiene_empleo" value="si" required>
+                                    <span>Sí</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="tiene_empleo" value="no" required>
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_empleo">Tipo de Empleo *</label>
+                            <select id="tipo_empleo" name="tipo_empleo" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="empleado">Formal</option>
+                                <option value="independiente">Independiente</option>
+				<option value="Informal">Informal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="score_crediticio">Score Crediticio (si lo conoces)</label>
+                            <input type="number" id="score_crediticio" name="score_crediticio" 
+                                   min="300" max="850" placeholder="Ej: 650">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Crédito -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">🏦</span>
+                        Información del Crédito
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="monto_solicitado">Monto Solicitado *</label>
+                            <div class="amount-input">
+                                <input type="number" id="monto_solicitado" name="monto_solicitado" 
+                                       required min="500000" placeholder="10000000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plazo_meses">Plazo en Meses *</label>
+                            <select id="plazo_meses" name="plazo_meses" required>
+                                <option value="">Selecciona el plazo</option>
+                                <option value="6">6 meses</option>
+                                <option value="12">12 meses</option>
+                                <option value="18">18 meses</option>
+                                <option value="24">24 meses</option>
+                                <option value="36">36 meses</option>
+                                <option value="48">48 meses</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_credito">Tipo de Crédito *</label>
+                            <select id="tipo_credito" name="tipo_credito" required>
+                                <option value="">Selecciona el tipo</option>
+                                <option value="personal">Consumo</option>
+                                <option value="vehiculo">Hipotecario</option>
+                                <option value="vivienda">Vehículo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        🚀 Encontrar mi crédito ideal
+                    </button>
+                    <div class="loading" id="loadingDiv">
+                        <div class="spinner"></div>
+                        <span>Analizando tu perfil crediticio...</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Progress bar functionality
+        const form = document.getElementById('creditForm');
+        const progressBar = document.getElementById('progressBar');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingDiv = document.getElementById('loadingDiv');
+
+        // Calculate progress based on filled fields
+        function updateProgress() {
+            const inputs = form.querySelectorAll('input[required], select[required]');
+            const radios = form.querySelectorAll('input[type="radio"][required]');
+            
+            let totalFields = inputs.length;
+            let filledFields = 0;
+
+            // Count regular inputs and selects
+            inputs.forEach(input => {
+                if (input.type !== 'radio' && input.value.trim() !== '') {
+                    filledFields++;
+                } else if (input.type === 'radio' && input.checked) {
+                    // Count radio groups only once
+                    const radioName = input.name;
+                    if (!document.querySelector(`input[name="${radioName}"][data-counted]`)) {
+                        input.setAttribute('data-counted', 'true');
+                        filledFields++;
+                    }
+                }
+            });
+
+            // Reset radio counting attributes
+            radios.forEach(radio => {
+                radio.removeAttribute('data-counted');
+            });
+
+            const progress = (filledFields / totalFields) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Radio button styling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove selected class from all options with same name
+                document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                    r.closest('.radio-option').classList.remove('selected');
+                });
+                // Add selected class to current option
+                this.closest('.radio-option').classList.add('selected');
+                updateProgress();
+            });
+        });
+
+        // Update progress on input
+        form.addEventListener('input', updateProgress);
+        form.addEventListener('change', updateProgress);
+
+        // Form submission
+      // Form submission
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Show loading
+    submitBtn.style.display = 'none';
+    loadingDiv.style.display = 'flex';
+
+    // Collect form data
+    const formData = new FormData(form);
+    
+    // Send data to server
+        fetch('/predecir', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.text();
+        })
+        .then(html => {
+            // Replace current page with the response
+            document.open();
+            document.write(html);
+            document.close();
+        })
+       .catch(error => {
+            console.error('Error completo:', error);
+            console.log('Respuesta del servidor:', error.response); // si está disponible
+            alert(`Error detallado: ${error.message}`);
+            loadingDiv.style.display = 'none';
+            submitBtn.style.display = 'inline-block';
+        });
+    });
+        // Format currency inputs
+        document.querySelectorAll('.amount-input input').forEach(input => {
+            input.addEventListener('input', function() {
+                // Remove non-numeric characters except decimal point
+                let value = this.value.replace(/[^\d]/g, '');
+                this.value = value;
+            });
+        });
+
+        // Initial progress update
+        updateProgress();
+    </script>
+</body>
+</html>

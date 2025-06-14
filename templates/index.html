@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrediExplore - Encuentra el crédito perfecto para ti</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50px, -50px) rotate(0deg); }
+            50% { transform: translate(-30px, -70px) rotate(180deg); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero-text .tagline {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .cta-primary {
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-primary:hover::before {
+            left: 100%;
+        }
+
+        /* Trust Indicators */
+        .trust-indicators {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .trust-icon {
+            width: 24px;
+            height: 24px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* How it works section */
+        .how-it-works {
+            padding: 5rem 2rem;
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #2d3748;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .step p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Benefits section */
+        .benefits {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            transition: background 0.3s ease;
+        }
+
+        .benefit:hover {
+            background: #f7fafc;
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .benefit-content h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .benefit-content p {
+            color: #4a5568;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: #4ecdc4;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .step:nth-child(1) { animation-delay: 0.1s; }
+        .step:nth-child(2) { animation-delay: 0.2s; }
+        .step:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Loading animation for CTA */
+        .cta-primary.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .cta-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+	/* Sponsorship Section */
+.sponsorship {
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    text-align: center;
+}
+
+.sponsorship-content h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.sponsor-logo {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 2rem;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.sponsor-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sponsorship-content p {
+    font-size: 1.3rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+.sponsor-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .sponsor-logo {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .sponsorship-content p {
+        font-size: 1.1rem;
+    }
+}
+/* Founders Section */
+.founders {
+    padding: 5rem 2rem;
+    background: #f8fafc;
+}
+
+.founders-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.founder-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.founder-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+.founder-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #667eea;
+    background: #f0f0f0;
+}
+
+.founder-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.founder-info h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.founder-role {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.founder-description {
+    color: #4a5568;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .founders-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #2d3748;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #667eea;
+}
+
+.nav-cta {
+    background: #667eea;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+/* Adjust hero for navbar */
+.hero {
+    padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .navbar {
+        padding: 0.75rem 0;
+    }
+    
+    .hero {
+        padding-top: 70px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">💳</div>
+                <span class="logo-text">CrediExplorer</span>
+            </div>
+            <div class="nav-links">
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="#quienes-somos">Quiénes somos</a>
+                <a href="#contacto">Contacto</a>
+                <button class="nav-cta" onclick="startProcess()">Empezar ahora</button>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Encuentra tu crédito ideal en <span style="color: #4ecdc4;">segundos</span></h1>
+                <p class="tagline">Compara entre 3+ bancos y encuentra las mejores tasas adaptadas a tu perfil financiero</p>
+                
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">87%</span>
+                        <span class="stat-label">Aprobación</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">5 min</span>
+                        <span class="stat-label">Proceso</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3+</span>
+                        <span class="stat-label">Bancos</span>
+                    </div>
+                </div>
+
+                <button class="cta-primary" onclick="startProcess()">
+                    ✨ Empezar evaluación gratuita
+                </button>
+            </div>
+
+            <div class="trust-indicators">
+                <div class="trust-item">
+                    <div class="trust-icon">🔒</div>
+                    <div>
+                        <strong>100% Seguro</strong><br>
+                        <small>Tus datos están protegidos con encriptación bancaria</small>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">⚡</div>
+                    <div>
+                        <strong>Respuesta Inmediata</strong><br>
+                        <small>Conoce tu preaprobación en tiempo real</small>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">💰</div>
+                    <div>
+                        <strong>Sin Costo</strong><br>
+                        <small>Servicio completamente gratuito para ti</small>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🏆</div>
+                    <div>
+                        <strong>+50,000 usuarios</strong><br>
+                        <small>Confían en nosotros para encontrar su crédito</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Así de fácil funciona</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Cuéntanos sobre ti</h3>
+                    <p>Responde 14 preguntas simples sobre tus ingresos, gastos y el tipo de crédito que necesitas. Solo toma 5 minutos.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Analizamos en tiempo real</h3>
+                    <p>Nuestro algoritmo consulta más de 3 entidades financieras para encontrar las mejores opciones para tu perfil.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Elige y aplica</h3>
+                    <p>Te mostramos las opciones preaprobadas con tasas reales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <!-- Benefits -->
+    <section class="benefits">
+        <div class="container">
+            <h2 class="section-title">¿Quiénes somos?</h2>
+            <p style="text-align: center; color: #4a5568; font-size: 1.2rem; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                Somos un equipo de jóvenes desarrolladores formados en Talento Tech, unidos por resolver una problematica: muchas personas no saben por dónde empezar cuando necesitan un crédito. Frente a este problema, decidimos crear una solución práctica y accesible. Así nació esta plataforma, que utiliza inteligencia artificial y machine learning para analizar tu perfil y mostrarte qué bancos tienen más probabilidad de aprobar tu solicitud. Nuestro objetivo es ayudarte a tomar decisiones financieras con mayor seguridad, rapidez y confianza, usando la tecnología como aliada..
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <div class="benefit-icon">🚀</div>
+                    <div class="benefit-content">
+                        <h4>Innovación tecnológica</h4>
+                        <p>Utilizamos algoritmos avanzados de machine learning para analizar tu perfil y encontrar las mejores opciones crediticias.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-content">
+                        <h4>Experiencia comprobada</h4>
+                        <p>Más de 15 años de experiencia combinada en el sector financiero colombiano nos respaldan.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">💼</div>
+                    <div class="benefit-content">
+                        <h4>Alianzas estratégicas</h4>
+                        <p>Trabajamos directamente con más de 3 entidades financieras para ofrecerte las mejores condiciones.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🏆</div>
+                    <div class="benefit-content">
+                        <h4>Compromiso social</h4>
+                        <p>Nuestra misión es facilitar el acceso al crédito para todos los colombianos, sin importar su perfil financiero.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founders Section -->
+    <section class="founders">
+        <div class="container">
+            <h2 class="section-title">Conoce a nuestro equipo</h2>
+            <p style="text-align: center; color: #4a5568; font-size: 1.1rem; margin-bottom: 3rem;">
+                Profesionales con más de 15 años de experiencia en el sector financiero
+            </p>
+            
+            <div class="founders-grid">
+                <div class="founder-card">
+                    <div class="founder-image">
+                        <img src="Fundador2.jpg" alt="Fundador 1">
+                    </div>
+                    <div class="founder-info">
+                        <h4>Sandra</h4>
+                        <p class="founder-role">Administradora de empresas y Financiera</p>
+                        <p class="founder-description">15 años en banca corporativa. Ex-directora de productos crediticios en Bancolombia.</p>
+                    </div>
+                </div>
+                
+                <div class="founder-card">
+                    <div class="founder-image">
+                        <img src="Fundador1.jpg" alt="Fundador 2">
+                    </div>
+                    <div class="founder-info">
+                        <h4>Angela</h4>
+                        <p class="founder-role">Ingeniera en Software</p>
+                        <p class="founder-description">Mano derecha de Bill Gates y graduada de Harvard con 20 años de experiencia en la programación.</p>
+                    </div>
+                </div>
+                
+                <div class="founder-card">
+                    <div class="founder-image">
+                        <img src="jhordi.jpg" alt="Fundador 3">
+                    </div>
+                    <div class="founder-info">
+                        <h4>Jhordi Niz</h4>
+                        <p class="founder-role">Ingeniero en Telecomunicaciones</p>
+                        <p class="founder-description">Exdirector General de EMTELCO que renuncio para trabajar con el proyecto CrediExplorer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsorship Section -->
+    <section class="sponsorship">
+        <div class="container">
+            <div class="sponsorship-content">
+                <h3>Con el patrocinio de</h3>
+                <div class="sponsor-logo">
+                    <img src="Patrocinador.jpg" alt="Maluma patrocinador">
+                </div>
+                <p>"Confío en CrediExplore para ayudar a mi gente a encontrar las mejores oportunidades financieras chajskjka"</p>
+                <span class="sponsor-name">- Maluma</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>¿Listo para encontrar tu crédito ideal?</h2>
+            <p>Miles de personas ya encontraron las mejores tasas con nosotros</p>
+            <button class="cta-primary" onclick="startProcess()">
+                🚀 Comenzar ahora - Es gratis
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2024 CrediExplore. Todos los derechos reservados.</p>
+            <p style="margin-top: 1rem;">
+                <a href="terminos.html">Términos y condiciones</a> | 
+                <a href="privacidad.html">Política de privacidad</a> | 
+                <a href="contacto.html">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function startProcess() {
+        const button = event.target;
+        button.classList.add('loading');
+        button.innerHTML = 'Iniciando...';
+        
+        setTimeout(() => {
+            window.location.href = "/formulario";  // Cambiado a ruta Flask
+            button.classList.remove('loading');
+            button.innerHTML = '✨ Empezar evaluación gratuita';
+        }, 2000);
+    }
+        // Animación suave al hacer scroll
+        window.addEventListener('scroll', () => {
+            const elements = document.querySelectorAll('.step, .benefit');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Efecto parallax sutil en el hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+	window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+    </script>
+</body>
+</html>

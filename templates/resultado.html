@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado - CrediExplore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .result-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .aprobado {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .rechazado {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .probability {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .aprobado-text {
+            color: #4ecdc4;
+        }
+
+        .rechazado-text {
+            color: #ff6b6b;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .recommendations {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .recommendations h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .recommendations ul {
+            list-style-position: inside;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <div class="result-icon {% if resultado == 'APROBADO' %}aprobado{% else %}rechazado{% endif %}">
+            {% if resultado == 'APROBADO' %}✓{% else %}✗{% endif %}
+        </div>
+        <h1>Resultado: <span class="{% if resultado == 'APROBADO' %}aprobado-text{% else %}rechazado-text{% endif %}">{{ resultado }}</span></h1>
+        <div class="probability">Probabilidad de aprobación: {{ probabilidad }}</div>
+        
+        <div class="recommendations">
+            {% if resultado == 'APROBADO' %}
+                <h3>¡Felicidades! Próximos pasos:</h3>
+                <ul>
+                    <li>Recibirás un correo con las opciones de crédito</li>
+                    <li>Compara las tasas y condiciones</li>
+                    <li>Un asesor se comunicará contigo</li>
+                </ul>
+            {% else %}
+                <h3>Recomendaciones para mejorar tu perfil:</h3>
+                <ul>
+                    <li>Mejora tu score crediticio</li>
+                    <li>Reduce tu relación deuda/ingresos</li>
+                    <li>Considera un monto menor o plazo más largo</li>
+                </ul>
+            {% endif %}
+        </div>
+        
+        <a href="/" class="back-btn">Volver al inicio</a>
+    </div>
+</body>
+</html>
