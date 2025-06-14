@@ -76,7 +76,6 @@ def predecir(data: FormData):
     pred = pipeline.predict(df)[0]
     return {"aprobado": bool(pred)}
 
-# Solo si lo ejecutas directamente (ideal para desarrollo)
 if __name__ == "__main__":
     try:
         conf.get_default().config_path = "ngrok.yml"
