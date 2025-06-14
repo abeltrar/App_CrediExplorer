@@ -6,6 +6,8 @@ from pyngrok import conf, ngrok
 import joblib
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 # Cargar modelo
 pipeline = joblib.load("modelo_credito.pkl")
@@ -37,9 +39,19 @@ async def ingreso_data(request: Request):
  return templates.TemplateResponse("ingresodata.html", {"request": request})
 
 
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    print("❌ Error de validación:", exc.errors())
+    return JSONResponse(
+    status_code=422,
+    content={"detail": exc.errors()},
+    )
+
+
 # Definición del esquema de entrada
-class FormData(BaseModel):
-    cedula: str              
+class FormData(BaseModel): 
     edad: int
     genero: str
     estado_civil: str
@@ -49,32 +61,62 @@ class FormData(BaseModel):
     gastos_mensuales: float
     tiene_empleo: str
     tipo_empleo: str
-    score_crediticio: float = None
+    score_crediticio: float 
     monto_solicitado: float
     plazo_meses: int
     tipo_credito: str
+    banco: str  
+
 
 # Endpoint para predicción
+
 @app.post("/predecir")
 def predecir(data: FormData):
     df = pd.DataFrame([{
         "edad": data.edad,
-        "ingresos_mensuales": data.ingresos_mensuales,
-        "gastos_mensuales": data.gastos_mensuales,
         "score_crediticio": data.score_crediticio or 0,
-        "monto_solicitado": data.monto_solicitado,
         "plazo_meses": data.plazo_meses,
-        "genero": data.genero,
-        "estado_civil": data.estado_civil,
-        "nivel_educativo": data.nivel_educativo,
-        "ciudad": data.ciudad,
-        "tiene_empleo": data.tiene_empleo,
-        "tipo_empleo": data.tipo_empleo,
-        "tipo_credito": data.tipo_credito,
+        "sueldo en pesos": data.ingresos_mensuales,
+        "gasto en pesos": data.gastos_mensuales,
+        "monto_solicitado (Cop)": data.monto_solicitado,
+
+        # One-hot encoding manual
+        "estado_civil_Casado": 1 if data.estado_civil.lower() == "casado" else 0,
+        "estado_civil_Divorciado": 1 if data.estado_civil.lower() == "divorciado" else 0,
+        "estado_civil_Soltero": 1 if data.estado_civil.lower() == "soltero" else 0,
+
+        "genero_F": 1 if data.genero.upper() == "F" else 0,
+        "genero_M": 1 if data.genero.upper() == "M" else 0,
+
+        "nivel_educativo_Primaria": 1 if data.nivel_educativo.lower() == "primaria" else 0,
+        "nivel_educativo_Secundaria": 1 if data.nivel_educativo.lower() == "secundaria" else 0,
+        "nivel_educativo_Universitaria": 1 if data.nivel_educativo.lower() == "universitaria" else 0,
+
+        "ciudad_Barranquilla": 1 if data.ciudad.lower() == "barranquilla" else 0,
+        "ciudad_Bogota": 1 if data.ciudad.lower() == "bogota" else 0,
+        "ciudad_Cali": 1 if data.ciudad.lower() == "cali" else 0,
+        "ciudad_Medellin": 1 if data.ciudad.lower() == "medellin" else 0,
+
+        "tipo_empleo_Formal": 1 if data.tipo_empleo.lower() == "formal" else 0,
+        "tipo_empleo_Independiente": 1 if data.tipo_empleo.lower() == "independiente" else 0,
+        "tipo_empleo_Informal": 1 if data.tipo_empleo.lower() == "informal" else 0,
+
+        "tiene_empleo_True": 1 if data.tiene_empleo.lower() == "si" else 0,
+        "tiene_empleo_False": 1 if data.tiene_empleo.lower() == "no" else 0,
+
+        "tipo_credito_Consumo": 1 if data.tipo_credito.lower() == "consumo" else 0,
+        "tipo_credito_Hipotecario": 1 if data.tipo_credito.lower() == "hipotecario" else 0,
+        "tipo_credito_Vehiculo": 1 if data.tipo_credito.lower() == "vehiculo" else 0,
+
+        "banco_Banco A": 1 if hasattr(data, "banco") and data.banco == "Banco A" else 0,
+        "banco_Banco B": 1 if hasattr(data, "banco") and data.banco == "Banco B" else 0,
+        "banco_Banco C": 1 if hasattr(data, "banco") and data.banco == "Banco C" else 0,
     }])
 
     pred = pipeline.predict(df)[0]
     return {"aprobado": bool(pred)}
+
+
 
 if __name__ == "__main__":
     try:

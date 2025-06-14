@@ -510,53 +510,95 @@
 
     <script>
 
-
         document.getElementById('creditForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
+        e.preventDefault();
 
-                const submitBtn = document.getElementById('submitBtn');
-                const loadingDiv = document.getElementById('loadingDiv');
-                submitBtn.disabled = true;
-                loadingDiv.style.display = 'block';
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingDiv = document.getElementById('loadingDiv');
+        submitBtn.disabled = true;
+        loadingDiv.style.display = 'block';
 
-                const form = e.target;
-                const formData = new FormData(form);
-                const data = {};
-                formData.forEach((value, key) => {
-                    if (key === 'score_crediticio' && value.trim() === '') {
-                        data[key] = null;
-                    } else {
-                        data[key] = isNaN(value) ? value : parseFloat(value);
-                    }
-                });
+        const form = e.target;
+        const formData = new FormData(form);
+        const raw = {};
+        formData.forEach((value, key) => {
+            raw[key] = isNaN(value) ? value : parseFloat(value);
+        });
 
-                try {
-                    const response = await fetch('http://localhost:8000/predecir', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
+        const data = {
+            edad: raw.edad,
+            score_crediticio: raw.score_crediticio || 0,
+            plazo_meses: raw.plazo_meses,
+            "sueldo en pesos": raw.ingresos_mensuales,
+            "gasto en pesos": raw.gastos_mensuales,
+            "monto_solicitado (Cop)": raw.monto_solicitado,
 
-                    const result = await response.json();
-                    const mensaje = result.aprobado ? "✅ Crédito aprobado" : "❌ Crédito no aprobado";
+            estado_civil_Casado: raw.estado_civil === "casado" ? 1 : 0,
+            estado_civil_Divorciado: raw.estado_civil === "divorciado" ? 1 : 0,
+            estado_civil_Soltero: raw.estado_civil === "soltero" ? 1 : 0,
 
-                    const resultadoDiv = document.getElementById('resultadoModelo');
-                    const mensajeDiv = document.getElementById('mensajeResultado');
-                    mensajeDiv.textContent = mensaje;
-                    mensajeDiv.style.backgroundColor = result.aprobado ? '#d4edda' : '#f8d7da';
-                    mensajeDiv.style.color = result.aprobado ? '#155724' : '#721c24';
-                    resultadoDiv.style.display = 'block';
+            genero_F: raw.genero === "F" ? 1 : 0,
+            genero_M: raw.genero === "M" ? 1 : 0,
 
-                } catch (error) {
-                    alert("Hubo un error al conectar con el modelo.");
-                    console.error(error);
-                } finally {
-                    submitBtn.disabled = false;
-                    loadingDiv.style.display = 'none';
-                }
-            });
+            nivel_educativo_Primaria: raw.nivel_educativo === "primaria" ? 1 : 0,
+            nivel_educativo_Secundaria: raw.nivel_educativo === "secundaria" ? 1 : 0,
+            nivel_educativo_Universitaria: raw.nivel_educativo === "universitaria" ? 1 : 0,
+
+            ciudad_Barranquilla: raw.ciudad === "barranquilla" ? 1 : 0,
+            ciudad_Bogota: raw.ciudad === "bogota" ? 1 : 0,
+            ciudad_Cali: raw.ciudad === "cali" ? 1 : 0,
+            ciudad_Medellin: raw.ciudad === "medellin" ? 1 : 0,
+
+            tipo_empleo_Formal: raw.tipo_empleo === "formal" ? 1 : 0,
+            tipo_empleo_Independiente: raw.tipo_empleo === "independiente" ? 1 : 0,
+            tipo_empleo_Informal: raw.tipo_empleo === "informal" ? 1 : 0,
+
+            tiene_empleo_True: raw.tiene_empleo === "si" ? 1 : 0,
+            tiene_empleo_False: raw.tiene_empleo === "no" ? 1 : 0,
+
+            tipo_credito_Consumo: raw.tipo_credito === "consumo" ? 1 : 0,
+            tipo_credito_Hipotecario: raw.tipo_credito === "hipotecario" ? 1 : 0,
+            tipo_credito_Vehiculo: raw.tipo_credito === "vehiculo" ? 1 : 0,
+            
+            "banco_Banco A": raw.banco === "Banco A" ? 1 : 0,
+            "banco_Banco B": raw.banco === "Banco B" ? 1 : 0,
+            "banco_Banco C": raw.banco === "Banco C" ? 1 : 0
+
+        };
+
+        console.log("📤 Datos transformados:", data);
+
+        try {
+            const response = await fetch('http://localhost:8000/predecir', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            const mensaje = result.aprobado ? "✅ Crédito aprobado" : "❌ Crédito no aprobado";
+
+            const resultadoDiv = document.getElementById('resultadoModelo');
+            const mensajeDiv = document.getElementById('mensajeResultado');
+            mensajeDiv.textContent = mensaje;
+            mensajeDiv.style.backgroundColor = result.aprobado ? '#d4edda' : '#f8d7da';
+            mensajeDiv.style.color = result.aprobado ? '#155724' : '#721c24';
+            resultadoDiv.style.display = 'block';
+
+        } catch (error) {
+            alert("Hubo un error al conectar con el modelo.");
+            console.error(error);
+        } finally {
+            submitBtn.disabled = false;
+            loadingDiv.style.display = 'none';
+        }
+    });
+
+
+
+      
 
 
         
