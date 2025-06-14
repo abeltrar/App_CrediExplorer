@@ -502,109 +502,68 @@
         </div>
     </div>
 
+    <div id="resultadoModelo" style="display: none; text-align: center; margin-top: 1rem;">
+        <div id="mensajeResultado" 
+            style="display: inline-block; padding: 1rem 2rem; border-radius: 1rem; font-size: 1.2rem; font-weight: bold;">
+        </div>
+    </div>
+
     <script>
-        // Progress bar functionality
-        const form = document.getElementById('creditForm');
-        const progressBar = document.getElementById('progressBar');
-        const submitBtn = document.getElementById('submitBtn');
-        const loadingDiv = document.getElementById('loadingDiv');
 
-        // Calculate progress based on filled fields
-        function updateProgress() {
-            const inputs = form.querySelectorAll('input[required], select[required]');
-            const radios = form.querySelectorAll('input[type="radio"][required]');
-            
-            let totalFields = inputs.length;
-            let filledFields = 0;
 
-            // Count regular inputs and selects
-            inputs.forEach(input => {
-                if (input.type !== 'radio' && input.value.trim() !== '') {
-                    filledFields++;
-                } else if (input.type === 'radio' && input.checked) {
-                    // Count radio groups only once
-                    const radioName = input.name;
-                    if (!document.querySelector(`input[name="${radioName}"][data-counted]`)) {
-                        input.setAttribute('data-counted', 'true');
-                        filledFields++;
-                    }
-                }
-            });
+        document.getElementById('creditForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-            // Reset radio counting attributes
-            radios.forEach(radio => {
-                radio.removeAttribute('data-counted');
-            });
+                const submitBtn = document.getElementById('submitBtn');
+                const loadingDiv = document.getElementById('loadingDiv');
+                submitBtn.disabled = true;
+                loadingDiv.style.display = 'block';
 
-            const progress = (filledFields / totalFields) * 100;
-            progressBar.style.width = progress + '%';
-        }
+                const form = e.target;
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    if (key === 'score_crediticio' && value.trim() === '') {
+                        data[key] = null;
+                    } else {
+                        data[key] = isNaN(value) ? value : parseFloat(value);
+                    }
+                });
 
-        // Radio button styling
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                // Remove selected class from all options with same name
-                document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
-                    r.closest('.radio-option').classList.remove('selected');
-                });
-                // Add selected class to current option
-                this.closest('.radio-option').classList.add('selected');
-                updateProgress();
-            });
-        });
+                try {
+                    const response = await fetch('http://localhost:8000/predecir', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
 
-        // Update progress on input
-        form.addEventListener('input', updateProgress);
-        form.addEventListener('change', updateProgress);
+                    const result = await response.json();
+                    const mensaje = result.aprobado ? "✅ Crédito aprobado" : "❌ Crédito no aprobado";
 
-        // Form submission
-      // Form submission
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Show loading
-    submitBtn.style.display = 'none';
-    loadingDiv.style.display = 'flex';
+                    const resultadoDiv = document.getElementById('resultadoModelo');
+                    const mensajeDiv = document.getElementById('mensajeResultado');
+                    mensajeDiv.textContent = mensaje;
+                    mensajeDiv.style.backgroundColor = result.aprobado ? '#d4edda' : '#f8d7da';
+                    mensajeDiv.style.color = result.aprobado ? '#155724' : '#721c24';
+                    resultadoDiv.style.display = 'block';
 
-    // Collect form data
-    const formData = new FormData(form);
-    
-    // Send data to server
-        fetch('/predecir', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return response.text();
-        })
-        .then(html => {
-            // Replace current page with the response
-            document.open();
-            document.write(html);
-            document.close();
-        })
-       .catch(error => {
-            console.error('Error completo:', error);
-            console.log('Respuesta del servidor:', error.response); // si está disponible
-            alert(`Error detallado: ${error.message}`);
-            loadingDiv.style.display = 'none';
-            submitBtn.style.display = 'inline-block';
-        });
-    });
-        // Format currency inputs
-        document.querySelectorAll('.amount-input input').forEach(input => {
-            input.addEventListener('input', function() {
-                // Remove non-numeric characters except decimal point
-                let value = this.value.replace(/[^\d]/g, '');
-                this.value = value;
-            });
-        });
+                } catch (error) {
+                    alert("Hubo un error al conectar con el modelo.");
+                    console.error(error);
+                } finally {
+                    submitBtn.disabled = false;
+                    loadingDiv.style.display = 'none';
+                }
+            });
 
-        // Initial progress update
-        updateProgress();
+
+        
+ 
+
+
+
     </script>
 </body>
 </html>
